@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  Id       Int       @id @default(autoincrement())
+  Name     String
+  Username String    @unique
+  Password String
+  Profile  Profile? // Creating the one to one connection. ? means Profile can be null. User can has or cannot has a profile.
+  Products Product[]
+  createAt DateTime  @default(now())
+  updateAt DateTime  @updatedAt
+}
+
+model Profile {
+  Id             Int      @id @default(autoincrement())
+  Image          String // Creating the one to one connection. A Profile must have a User.
+  AccountDetails User     @relation(fields: [UserId], references: [Id]) // The relation will be written in here. In the fields: [], in here inside the square brackets, there it must be written which field or fileds must be connect to the relation. references: [] means that with which field in the Profile it will be connected. That field must be inside the square brackets.
+  UserId         Int      @unique // The connection will be based on this. This is the foriegn key. This is Int type because it is Int type also in the User. This is a important fact in the creation of the profile.
+  createAt       DateTime @default(now())
+  updateAt       DateTime @updatedAt
+}
+
+// There is a one to one connection between User and Profile. User does not necessarily has a Profile but Profile must necessarily has a User.
+
+model Product {
+  Id       Int      @id @default(autoincrement())
+  Name     String
+  User     User     @relation(fields: [UserId], references: [Id]) // fields: [] means who(which fiels in here or the place where relation is defined. references: [] means the other table.)
+  UserId   Int // This is the connection.
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+}
+
+// There is a one to many connection between User and Product.
