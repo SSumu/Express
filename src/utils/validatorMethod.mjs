@@ -1,4 +1,4 @@
-import { body, query } from "express-validator";
+import { body, param, query } from "express-validator";
 
 export const validatorMethod = () => [
   // This is not necessarily need to be a function. If there is any other other logic, it can be applied.
@@ -28,20 +28,35 @@ export const registerValidate = [
 
 export const comValidate = (...keys) => {
   // ...keys means that in the validatorMethod.mjs some specific keys will be come to here from there. If the remaining bodies are taken as the same way, We can use common validate instead of this loginValidate. If the same way is functioning. I think this ...keys menas the information that user enters to the text boxes at the login.
-  const loginVa = [];
+  const bodyVa = [];
   keys.forEach((k) => {
-    loginVa.push(body(k).notEmpty().withMessage(`Plz Enter The ${k}`));
+    bodyVa.push(body(k).notEmpty().withMessage(`Plz Enter The ${k}`));
   });
 
-  return loginVa;
+  return bodyVa;
 };
 
 export const comQValidate = (...keys) => {
-  // ...keys means that in the validatorMethod.mjs some specific keys will be come to here from there. If the remaining bodies are taken as the same way, We can use common query validate instead of this loginValidate. If the same way is functioning. I think this ...keys menas the information that user enters to the text boxes at the login.
-  const loginVa = [];
+  // ...keys means that in the validatorMethod.mjs some specific keys will be come to here from there. If the remaining bodies are taken as the same way, We can use common query validate instead of this loginValidate. If the same way is functioning. I think this ...keys means the information that user enters to the text boxes at the login.
+  const qVa = [];
   keys.forEach((k) => {
-    loginVa.push(query(k).notEmpty().withMessage(`Plz Enter The ${k}`));
+    qVa.push(query(k).notEmpty().withMessage(`Plz Enter The ${k}`));
   });
 
-  return loginVa;
+  return qVa;
+};
+
+export const comPValidate = (...keys) => {
+  // ...keys means that in the validatorMethod.mjs some specific keys will be come to here from there. If the remaining bodies are taken as the same way, We can use common path validate instead of this loginValidate. If the same way is functioning. I think this ...keys means the information that user enters to the text boxes at the login.
+  const pVa = [];
+  keys.forEach((k) => {
+    pVa.push(
+      param(k)
+        .notEmpty()
+        .isNumeric()
+        .withMessage(`Plz Enter The ${k} as Number`)
+    );
+  });
+
+  return pVa;
 };

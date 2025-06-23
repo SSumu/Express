@@ -74,6 +74,121 @@ userRouter.get(/*"/api/v1/user/by-id"*/ "/by-id", async (req, res) => {
   });
 });
 
+// Get the profile and product from user's side
+// For the profile
+// Directly to the profile through the user
+// Get the profile from user's side
+userRouter.get(
+  /*"/api/v1/user/by-id"*/ "/profile/:userId",
+  async (req, res) => {
+    //   console.log(req.query);
+    const { userId } = req.params; // Get the userId from path params
+    if (userId !== undefined && userId !== "") {
+      try {
+        const userData = await DB.user.findUnique({
+          select: {
+            Profile: {
+              select: {
+                Image: true, // An object will be get as the response. But the thing will work as the same way even it is an object.
+              },
+            }, // To remove all the unneccessary data and keep only the neccessary in the profile as usual.
+          },
+          where: {
+            Id: Number(userId),
+          },
+        });
+        if (userData !== null)
+          return res.status(200).json({
+            msg: "error",
+            error: "your error msg",
+            data: userData,
+          });
+
+        return res.status(404).json({
+          msg: "error",
+          error: "user data not found",
+          data: userData,
+        });
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+          msg: "error",
+          error: "your error msg",
+          data: null,
+        });
+      }
+      // const user = userInfor.find((u) => u.id === Number(id));
+      // return res.status(200).json({
+      //   msg: "user data",
+      //   data: user,
+      // });
+    }
+    return res.status(400).json({
+      msg: "some error",
+      data: null,
+    });
+  }
+);
+
+// Delete the products from user's side
+// soft delete
+userRouter.get(
+  /*"/api/v1/user/by-id"*/ "/product/:userId",
+  async (req, res) => {
+    //   console.log(req.query);
+    const { userId } = req.params; // Get the userId from path params
+    if (userId !== undefined && userId !== "") {
+      try {
+        const userData = await DB.user.findUnique({
+          select: {
+            Products: {
+              select: {
+                Name: true, // Even if there is an array for product in product's side, we can give like this to select. Then only Name will be selected and got as the response.
+                ProductCategory: {
+                  select: {
+                    Name: true,
+                  },
+                }, //When taking products from user's side
+              },
+            },
+          },
+          where: {
+            Id: Number(userId),
+          },
+        });
+        if (userData !== null)
+          return res.status(200).json({
+            msg: "error",
+            error: "your error msg",
+            data: userData,
+          });
+
+        return res.status(404).json({
+          msg: "error",
+          error: "user data not found",
+          data: userData,
+        });
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+          msg: "error",
+          error: "your error msg",
+          data: null,
+        });
+      }
+      // const user = userInfor.find((u) => u.id === Number(id));
+      // return res.status(200).json({
+      //   msg: "user data",
+      //   data: user,
+      // });
+    }
+    return res.status(400).json({
+      msg: "some error",
+      data: null,
+    });
+  }
+);
+
 // create new user
 userRouter.post("/create-user", async (req, res) => {
   const userData = req.body;

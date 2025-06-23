@@ -19,7 +19,7 @@ model User {
   Username String    @unique
   Password String
   Profile  Profile? // Creating the one to one connection. ? means Profile can be null. User can has or cannot has a profile.
-  Products Product[]
+  Products Product[] // Many side in the One to Many (Many to One) relation is in here (to User side). Because here the Product[] of (array of products) :- Products are in here. One User has many products. One User owns many products. That is the meaning of this.
   createAt DateTime  @default(now())
   updateAt DateTime  @updatedAt
 }
@@ -36,12 +36,25 @@ model Profile {
 // There is a one to one connection between User and Profile. User does not necessarily has a Profile but Profile must necessarily has a User.
 
 model Product {
-  Id       Int      @id @default(autoincrement())
-  Name     String
-  User     User     @relation(fields: [UserId], references: [Id]) // fields: [] means who(which fiels in here or the place where relation is defined. references: [] means the other table.)
-  UserId   Int // This is the connection.
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  Id              Int        @id @default(autoincrement())
+  Name            String
+  User            User       @relation(fields: [UserId], references: [Id]) // fields: [] means who(which fiels in here or the place where relation is defined. references: [] means the other table.). One side in the One to Many (Many to One) relation is in here (Product side). One side comes from User. Product has only one User. That is the meaning of this.
+  UserId          Int // This is the connection.
+  ProductCategory Category[] // This [] means that one Product may belong many Categories. Category[] is the datatype of ProductCategory.
+  createAt        DateTime   @default(now())
+  updateAt        DateTime   @updatedAt
 }
 
 // There is a one to many connection between User and Product.
+
+// Many To Many relation
+// One product can be own to several or many categories. One category may has several or many products. So this is a many-to-many relation.
+model Category {
+  Id       Int       @id @default(autoincrement())
+  Name     String
+  Products Product[] // This [] means one Category may has many Products. Product[] is the datatype of Products.
+  createAt DateTime  @default(now())
+  updateAt DateTime  @updatedAt
+}
+
+// There we do not use a relation part like this @relation(fields: [UserId], references: [Id]) in here. Because it is not neccessary. It may or may not be there. There are some occasions that it needs to apply.
